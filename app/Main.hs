@@ -11,9 +11,8 @@ import System.Random
 
 -- | Miso framework import
 import Miso
-import Miso.String
-
-import Control.Monad.IO.Class
+import Miso.String (MisoString)
+import Data.Foldable (toList)
 
 #ifdef IOS
 import Language.Javascript.JSaddle.WKWebView as JSaddle
@@ -22,24 +21,20 @@ runApp :: JSM () -> IO ()
 runApp = JSaddle.run
 #else
 import Language.Javascript.JSaddle.Warp as JSaddle
+import Data.Sequence (mapWithIndex)
 
 runApp :: JSM () -> IO ()
 runApp = JSaddle.run 8080
 #endif
 
 -- | Type synonym for an application model
-type Model = [MisoString]
+type Model = (Int, [MisoString])
 
 -- | Sum type for application events
 data Action
-  = AddOne
-  | SubtractOne
-  | ChangeColor Int
+  = ChangeColor Int
   | NoOp
-  | SayHelloWorld
   deriving (Show, Eq)
-
-
 
 colors :: [MisoString]
 colors = ["blue", "green", "red", "orange", "yellow", "black", "brown", "white"]
@@ -50,7 +45,7 @@ randomList g i lst =
     then y : lst
     else randomList next_g (i + 1) (y : lst)
   where
-    (x, next_g) = (randomR (0, Prelude.length colors) g)
+    (x, next_g) = randomR (0, length colors) g
     y = colors !! x
 
 generateState :: StdGen -> [MisoString]
@@ -63,7 +58,7 @@ main = runApp $ do
   let state = generateState g
   startApp App {
     initialAction = NoOp -- initial action to be executed on application load
-    , model  = state                  -- initial model
+    , model  = (0, state)                  -- initial model
     , update = updateModel          -- update function
     , view   = viewModel            -- view function
     , events = defaultEvents        -- default delegated events
@@ -75,12 +70,15 @@ main = runApp $ do
 -- | Updates model, optionally introduces side effects
 updateModel :: Action -> Model -> Effect Action Model
 updateModel NoOp m = noEff m
-updateModel (ChangeColor i) m = noEff m 
+updateModel (ChangeColor i) (n, x) = noEff (i, x)
 
 -- | Constructs a virtual DOM from a model
 viewModel :: Model -> View Action
-viewModel x = div_ [class_ "container"] [
+viewModel (n, x) = div_ [class_ "container"] [
    div_ [style_ rowStyle]
-    (Prelude.map (\c -> div_ [style_ circleStyle, (getStyle c), style_ blockStyle, onClick (ChangeColor 0)] []) x)
+     divs
    ]
+   where
+    colorsWithInds = zip [0..] x
+    divs = (map  (\(i,c) -> div_ [style_ circleStyle, if n == i then style_ aquaStyle else (getStyle c), style_ blockStyle, onClick (ChangeColor i)] []) colorsWithInds)
 
