@@ -30,6 +30,18 @@ yellowStyle = M.fromList [("background", "yellow")]
 aquaStyle :: M.Map MisoString MisoString
 aquaStyle = M.fromList [("background", "aqua")]
 
+squareStyle :: M.Map MisoString MisoString
+squareStyle =
+  M.fromList
+    [ ("width", "20px")
+    , ("height", "20px")
+    , ("border-radius", "0px")
+    , ("margin", "10px")
+    , ("border-width", "1px")
+    , ("border-color", "black")
+    , ("border", "solid")
+    ]
+
 circleStyle :: M.Map MisoString MisoString
 circleStyle =
   M.fromList
@@ -37,5 +49,5 @@ circleStyle =
     , ("height", "20px")
     , ("border-radius", "10px")
     , ("margin", "10px")
-    , ("border", "")
+    , ("border-color", "black")
     ]

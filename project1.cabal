@@ -38,6 +38,7 @@ library
 executable project1-exe
   main-is: Main.hs
   other-modules:
+      Functions
       Styles
       Paths_project1
   hs-source-dirs:
