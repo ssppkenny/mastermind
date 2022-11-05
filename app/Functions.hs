@@ -1,15 +1,42 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-identities #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Functions
   ( checkRow
   , checkBoardRow
+  , Board
+  , Evaluation
+  , initialBoard
+  , initialEvaluation
+  , updateEvaluation
+  , updateBoard
+  , colors
   ) where
 
-import           Data.Array as A (Array, Ix, array, (!), (//))
-import           Data.Map   as M (Map, empty, insert, intersection, mapWithKey,
-                                  (!))
-import qualified Data.Set   as Set
+import           Data.Array  as A (Array, Ix, array, (!), (//))
+import           Data.Map    as M (Map, empty, fromList, insert, intersection,
+                                   mapWithKey, (!))
+import qualified Data.Set    as Set
+import           Miso.String (MisoString)
+
+type Board = Array Integer Integer
+
+type Evaluation = Array Integer Integer
+
+colors :: M.Map Integer MisoString
+colors =
+  M.fromList
+    [ (0, "white")
+    , (1, "blue")
+    , (2, "green")
+    , (3, "red")
+    , (4, "orange")
+    , (5, "yellow")
+    , (6, "black")
+    , (7, "brown")
+    , (8, "magenta")
+    ]
 
 initialBoard :: Array Integer Integer
 initialBoard = array (1, 40) [(i, 0) | i <- [1 .. 40]]

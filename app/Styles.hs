@@ -9,6 +9,33 @@ import           Miso.String
 getStyle :: MisoString -> Attribute action
 getStyle c = style_ (M.fromList [("background", c)])
 
+getNStyle :: Integer -> M.Map Integer MisoString -> Attribute action
+getNStyle n colors = style_ (M.fromList [("background", colors M.! n)])
+
+boardStyle :: M.Map MisoString MisoString
+boardStyle =
+  M.fromList
+    [ ("overflow", "hidden")
+    , ("width", "180px")
+    , ("left", "0")
+    , ("right", "0")
+    , ("top", "0")
+    , ("bottom", "0")
+    , ("margin", "auto")
+    ]
+
+cellStyle :: M.Map MisoString MisoString
+cellStyle =
+  M.fromList
+    [ ("width", "20px")
+    , ("height", "20px")
+    , ("border-radius", "20px")
+    , ("float", "left")
+    , ("margin", "10px")
+    , ("border-color", "black")
+    , ("border", "1px solid")
+    ]
+
 blockStyle :: M.Map MisoString MisoString
 blockStyle = M.fromList [("width", "20px"), ("float", "left")]
 
