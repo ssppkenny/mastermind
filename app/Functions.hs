@@ -42,7 +42,7 @@ initialBoard :: Array Integer Integer
 initialBoard = array (1, 40) [(i, 0) | i <- [1 .. 40]]
 
 initialEvaluation :: Array Integer Integer
-initialEvaluation = array (1, 20) [(i, -1) | i <- [1 .. 20]]
+initialEvaluation = array (1, 20) [(i, 0) | i <- [1 .. 20]]
 
 updateEvaluation :: (Ix a, Num a) => Array a e -> a -> e -> e -> Array a e
 updateEvaluation ev row r w = ev // [(2 * row - 1, r), (2 * row, w)]

@@ -16,7 +16,7 @@ boardStyle :: M.Map MisoString MisoString
 boardStyle =
   M.fromList
     [ ("overflow", "hidden")
-    , ("width", "180px")
+    , ("width", "200px")
     , ("left", "0")
     , ("right", "0")
     , ("top", "0")
@@ -35,6 +35,10 @@ cellStyle =
     , ("border-color", "black")
     , ("border", "1px solid")
     ]
+
+evStyle :: M.Map MisoString MisoString
+evStyle =
+  M.fromList [("width", "20px"), ("float", "left"), ("margin-top", "10px")]
 
 blockStyle :: M.Map MisoString MisoString
 blockStyle = M.fromList [("width", "20px"), ("float", "left")]

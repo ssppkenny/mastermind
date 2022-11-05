@@ -4,6 +4,7 @@
 {-# LANGUAGE RecordWildCards   #-}
 {-# OPTIONS_GHC -Wno-identities #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
 
 -- | Haskell module declaration
 module Main where
@@ -16,10 +17,14 @@ import           Data.Array                       as A ((!), (//))
 -- | Miso framework import
 import           Miso
 
-import           Functions                        (Board, Evaluation, colors,
+import           Functions                        (Board, Evaluation,
+                                                   checkBoardRow, colors,
                                                    initialBoard,
-                                                   initialEvaluation)
+                                                   initialEvaluation,
+                                                   updateBoard,
+                                                   updateEvaluation)
 import           Language.Javascript.JSaddle.Warp as JSaddle
+import           Miso.String                      (MisoString, toMisoString)
 
 runApp :: JSM () -> IO ()
 runApp = JSaddle.run 8080
@@ -41,6 +46,7 @@ type Model = GameModel
 data Action
   = PickColor Integer
   | AssignColor Integer
+  | CheckCurrentRow
   | NoOp
   deriving (Show, Eq)
 
@@ -54,6 +60,9 @@ randomList g i lst =
 
 generateState :: StdGen -> [Integer]
 generateState generator = randomList generator 1 []
+
+integerToMisoString :: Integer -> MisoString
+integerToMisoString n = toMisoString (fromIntegral n :: Int)
 
 -- | Entry point for a miso application
 main :: IO ()
@@ -83,6 +92,15 @@ main =
 -- | Updates model, optionally introduces side effects
 updateModel :: Action -> Model -> Effect Action Model
 updateModel NoOp m = noEff m
+updateModel CheckCurrentRow m = noEff newModel
+  where
+    b = board m
+    s = state m
+    cr = currentRow m
+    (r, w) = checkBoardRow b cr s
+    ev = evaluation m
+    newEvaluation = updateEvaluation ev cr r w
+    newModel = m {evaluation = newEvaluation, currentRow = cr - 1}
 updateModel (PickColor i) m = noEff (m {pickedColor = i})
 updateModel (AssignColor i) m = noEff m {board = newBoard}
   where
@@ -105,11 +123,17 @@ viewModel :: Model -> View Action
 viewModel m =
   div_
     [class_ "content"]
-    [div_ [style_ boardStyle] rows, div_ [style_ boardStyle] colorsForPick]
+    [ div_ [style_ boardStyle] rows
+    , div_ [style_ boardStyle] colorsForPick
+    , div_
+        [style_ boardStyle]
+        [button_ [onClick CheckCurrentRow] [text "Check row"]]
+    ]
   where
     b = board m
     n = length b
     rowCount = div n 4
+    ev = evaluation m
     colorsForPick =
       [ div_ [getNStyle i colors, style_ cellStyle, onClick (PickColor i)] []
       | i <- [1 .. 8]
@@ -141,6 +165,13 @@ viewModel m =
             , onClick (AssignColor (toInteger (4 * x)))
             ]
             []
+        , div_
+            [style_ evStyle]
+            [ span_
+                []
+                [text $ integerToMisoString (ev A.! toInteger (2 * x - 1))]
+            , span_ [] [text $ integerToMisoString (ev A.! toInteger (2 * x))]
+            ]
         ]
       | x <- [1 .. rowCount]
       ]
