@@ -58,8 +58,8 @@ checkRow row state = (toInteger r, toInteger w)
     counts2 = counts acc2
     m = intersection counts1 counts2
     keys = mapWithKey (\k _ -> min (counts1 M.! k) (counts2 M.! k)) m
-    r = sum keys
-    w =
+    w = sum keys
+    r =
       fromEnum (head row == head state) + fromEnum (row !! 1 == state !! 1) +
       fromEnum (row !! 2 == state !! 2) +
       fromEnum (row !! 3 == state !! 3)

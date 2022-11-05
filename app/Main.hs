@@ -21,7 +21,6 @@ import           Functions                        (Board, Evaluation,
                                                    checkBoardRow, colors,
                                                    initialBoard,
                                                    initialEvaluation,
-                                                   updateBoard,
                                                    updateEvaluation)
 import           Language.Javascript.JSaddle.Warp as JSaddle
 import           Miso.String                      (MisoString, toMisoString)
