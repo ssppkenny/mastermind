@@ -87,8 +87,18 @@ updateModel (PickColor i) m = noEff (m {pickedColor = i})
 updateModel (AssignColor i) m = noEff m {board = newBoard}
   where
     b = board m
+    row = currentRow m
+    ri =
+      case mod i 4 of
+        0 -> div i 4
+        1 -> div (i + 3) 4
+        2 -> div (i + 2) 4
+        _ -> div (i + 1) 4
     pc = pickedColor m
-    newBoard = b A.// [(i, pc)]
+    newBoard =
+      if ri == row
+        then b A.// [(i, pc)]
+        else b
 
 -- | Constructs a virtual DOM from a model
 viewModel :: Model -> View Action
