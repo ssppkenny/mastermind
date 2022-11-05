@@ -11,13 +11,10 @@ module Main where
 import           Styles
 import           System.Random
 
-import           Data.Map                         as M (Map, fromList, (!))
-
-import           Data.Array                       as A ((!))
+import           Data.Array                       as A ((!), (//))
 
 -- | Miso framework import
 import           Miso
-import           Miso.String                      (MisoString)
 
 import           Functions                        (Board, Evaluation, colors,
                                                    initialBoard,
@@ -43,6 +40,7 @@ type Model = GameModel
 -- | Sum type for application events
 data Action
   = PickColor Integer
+  | AssignColor Integer
   | NoOp
   deriving (Show, Eq)
 
@@ -84,8 +82,13 @@ main =
 
 -- | Updates model, optionally introduces side effects
 updateModel :: Action -> Model -> Effect Action Model
-updateModel NoOp m          = noEff m
+updateModel NoOp m = noEff m
 updateModel (PickColor i) m = noEff (m {pickedColor = i})
+updateModel (AssignColor i) m = noEff m {board = newBoard}
+  where
+    b = board m
+    pc = pickedColor m
+    newBoard = b A.// [(i, pc)]
 
 -- | Constructs a virtual DOM from a model
 viewModel :: Model -> View Action
@@ -98,20 +101,36 @@ viewModel m =
     n = length b
     rowCount = div n 4
     colorsForPick =
-      [div_ [getNStyle i colors, style_ cellStyle] [] | i <- [1 .. 8]]
+      [ div_ [getNStyle i colors, style_ cellStyle, onClick (PickColor i)] []
+      | i <- [1 .. 8]
+      ]
     rows =
       [ div_
         []
         [ div_
-            [style_ cellStyle, getNStyle (b A.! toInteger (4 * x - 3)) colors]
+            [ style_ cellStyle
+            , getNStyle (b A.! toInteger (4 * x - 3)) colors
+            , onClick (AssignColor (toInteger (4 * x - 3)))
+            ]
             []
         , div_
-            [style_ cellStyle, getNStyle (b A.! toInteger (4 * x - 2)) colors]
+            [ style_ cellStyle
+            , getNStyle (b A.! toInteger (4 * x - 2)) colors
+            , onClick (AssignColor (toInteger (4 * x - 2)))
+            ]
             []
         , div_
-            [style_ cellStyle, getNStyle (b A.! toInteger (4 * x - 1)) colors]
+            [ style_ cellStyle
+            , getNStyle (b A.! toInteger (4 * x - 1)) colors
+            , onClick (AssignColor (toInteger (4 * x - 1)))
+            ]
             []
-        , div_ [style_ cellStyle, getNStyle (b A.! toInteger (4 * x)) colors] []
+        , div_
+            [ style_ cellStyle
+            , getNStyle (b A.! toInteger (4 * x)) colors
+            , onClick (AssignColor (toInteger (4 * x)))
+            ]
+            []
         ]
       | x <- [1 .. rowCount]
       ]
