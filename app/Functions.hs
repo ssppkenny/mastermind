@@ -52,7 +52,7 @@ randomList g i lst =
     then toInteger x : lst
     else randomList next_g (i + 1) (toInteger x : lst)
   where
-    (x, next_g) = randomR (1, length colors) g
+    (x, next_g) = randomR (1, length colors - 1) g
 
 generateState :: StdGen -> [Integer]
 generateState generator = randomList generator 1 []

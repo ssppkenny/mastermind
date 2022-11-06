@@ -37,7 +37,7 @@ library:
   source-dirs: src
 
 executables:
-  project1-exe:
+  mastermind-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -55,13 +55,3 @@ executables:
     - aeson
     - array
     - random
-tests:
-  project1-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - project1

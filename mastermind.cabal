@@ -35,7 +35,7 @@ library
       base >=4.7 && <5
   default-language: Haskell2010
 
-executable project1-exe
+executable mastermind-exe
   main-is: Main.hs
   other-modules:
       Functions
@@ -56,17 +56,4 @@ executable project1-exe
     , mysql-simple
     , random
     , split
-  default-language: Haskell2010
-
-test-suite project1-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Paths_mastermind
-  hs-source-dirs:
-      test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , project1
   default-language: Haskell2010
