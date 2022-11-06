@@ -92,7 +92,7 @@ updateModel CheckCurrentRow m = noEff newModel
       m
         { evaluation = newEvaluation
         , currentRow =
-            if cr >= 2 && isRowFull b cr
+            if cr >= 2 && isRowFull b cr && r /= 4
               then cr - 1
               else cr
         , showState = cr == 1 || r == 4 && w == 0
