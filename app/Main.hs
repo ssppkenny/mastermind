@@ -10,7 +10,8 @@
 module Main where
 
 import           Styles
-import           System.Random
+
+import           System.Random                    (getStdGen)
 
 import           Data.Array                       as A ((!), (//))
 
@@ -19,11 +20,11 @@ import           Miso
 
 import           Functions                        (Board, Evaluation,
                                                    checkBoardRow, colors,
-                                                   initialBoard,
+                                                   generateState, initialBoard,
                                                    initialEvaluation,
+                                                   integerToMisoString,
                                                    updateEvaluation)
 import           Language.Javascript.JSaddle.Warp as JSaddle
-import           Miso.String                      (MisoString, toMisoString)
 
 runApp :: JSM () -> IO ()
 runApp = JSaddle.run 8080
@@ -49,20 +50,6 @@ data Action
   | CheckCurrentRow
   | NoOp
   deriving (Show, Eq)
-
-randomList :: StdGen -> Integer -> [Integer] -> [Integer]
-randomList g i lst =
-  if i == 4
-    then toInteger x : lst
-    else randomList next_g (i + 1) (toInteger x : lst)
-  where
-    (x, next_g) = randomR (1, length colors) g
-
-generateState :: StdGen -> [Integer]
-generateState generator = randomList generator 1 []
-
-integerToMisoString :: Integer -> MisoString
-integerToMisoString n = toMisoString (fromIntegral n :: Int)
 
 -- | Entry point for a miso application
 main :: IO ()

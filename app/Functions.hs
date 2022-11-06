@@ -12,13 +12,17 @@ module Functions
   , updateEvaluation
   , updateBoard
   , colors
+  , integerToMisoString
+  , generateState
   ) where
 
-import           Data.Array  as A (Array, Ix, array, (!), (//))
-import           Data.Map    as M (Map, empty, fromList, insert, intersection,
-                                   mapWithKey, (!))
-import qualified Data.Set    as Set
-import           Miso.String (MisoString)
+import           Data.Array    as A (Array, Ix, array, (!), (//))
+import           Data.Map      as M (Map, empty, fromList, insert, intersection,
+                                     mapWithKey, (!))
+import qualified Data.Set      as Set
+import           Miso.String   (MisoString, toMisoString)
+
+import           System.Random
 
 type Board = Array Integer Integer
 
@@ -37,6 +41,20 @@ colors =
     , (7, "brown")
     , (8, "magenta")
     ]
+
+integerToMisoString :: Integer -> MisoString
+integerToMisoString n = toMisoString (fromIntegral n :: Int)
+
+randomList :: StdGen -> Integer -> [Integer] -> [Integer]
+randomList g i lst =
+  if i == 4
+    then toInteger x : lst
+    else randomList next_g (i + 1) (toInteger x : lst)
+  where
+    (x, next_g) = randomR (1, length colors) g
+
+generateState :: StdGen -> [Integer]
+generateState generator = randomList generator 1 []
 
 initialBoard :: Array Integer Integer
 initialBoard = array (1, 40) [(i, 0) | i <- [1 .. 40]]
