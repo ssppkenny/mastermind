@@ -14,6 +14,7 @@ module Functions
   , colors
   , integerToMisoString
   , generateState
+  , isRowFull
   ) where
 
 import           Data.Array    as A (Array, Ix, array, (!), (//))
@@ -81,6 +82,14 @@ checkRow row state = (toInteger r, toInteger w)
       fromEnum (head row == head state) + fromEnum (row !! 1 == state !! 1) +
       fromEnum (row !! 2 == state !! 2) +
       fromEnum (row !! 3 == state !! 3)
+
+isRowFull :: Array Integer Integer -> Integer -> Bool
+isRowFull board rowNumber = a /= 0 && b /= 0 && c /= 0 && d /= 0
+  where
+    a = board A.! (4 * rowNumber - 3)
+    b = board A.! (4 * rowNumber - 2)
+    c = board A.! (4 * rowNumber - 1)
+    d = board A.! (4 * rowNumber)
 
 checkBoardRow ::
      Array Integer Integer -> Integer -> [Integer] -> (Integer, Integer)

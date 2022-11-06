@@ -23,7 +23,7 @@ import           Functions                        (Board, Evaluation,
                                                    generateState, initialBoard,
                                                    initialEvaluation,
                                                    integerToMisoString,
-                                                   updateEvaluation)
+                                                   isRowFull, updateEvaluation)
 import           Language.Javascript.JSaddle.Warp as JSaddle
 
 runApp :: JSM () -> IO ()
@@ -92,7 +92,7 @@ updateModel CheckCurrentRow m = noEff newModel
       m
         { evaluation = newEvaluation
         , currentRow =
-            if cr >= 2
+            if cr >= 2 && isRowFull b cr
               then cr - 1
               else cr
         , showState = cr == 1 || r == 4 && w == 0
@@ -135,7 +135,12 @@ viewModel m =
     , div_
         [style_ boardStyle]
         [ button_
-            [style_ widthStyle, onClick CheckCurrentRow]
+            [ style_ widthStyle
+            , if isRowFull b cr
+                then style_ stateVisibleStyle
+                else style_ stateInvisibleStyle
+            , onClick CheckCurrentRow
+            ]
             [text "Check row"]
         ]
     ]
@@ -143,6 +148,7 @@ viewModel m =
     b = board m
     n = length b
     s = state m
+    cr = currentRow m
     showStateLine = showState m
     rowCount = div n 4
     pc = pickedColor m
@@ -160,7 +166,10 @@ viewModel m =
       ]
     rows =
       [ div_
-        []
+        [ if toInteger x == cr
+            then style_ currentRowStyle
+            else style_ emptyStyle
+        ]
         [ div_
             [ style_ cellStyle
             , getNStyle (b A.! toInteger (4 * x - 3)) colors

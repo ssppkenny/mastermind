@@ -45,6 +45,14 @@ borderStyle = M.fromList [("border", "1px solid")]
 widthStyle :: M.Map MisoString MisoString
 widthStyle = M.fromList [("width", "200px")]
 
+currentRowStyle :: M.Map MisoString MisoString
+currentRowStyle =
+  M.fromList
+    [("overflow", "auto"), ("border-style", "solid"), ("width", "195px")]
+
+emptyStyle :: M.Map MisoString MisoString
+emptyStyle = M.fromList []
+
 stateVisibleStyle :: M.Map MisoString MisoString
 stateVisibleStyle =
   M.fromList [("visibility", "visible"), ("border", "1px solid")]
