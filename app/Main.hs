@@ -35,6 +35,7 @@ data GameModel =
     , state       :: [Integer]
     , board       :: Board
     , evaluation  :: Evaluation
+    , showState   :: Bool
     }
   deriving (Show, Eq)
 
@@ -55,7 +56,7 @@ randomList g i lst =
     then toInteger x : lst
     else randomList next_g (i + 1) (toInteger x : lst)
   where
-    (x, next_g) = randomR (0, length colors) g
+    (x, next_g) = randomR (1, length colors) g
 
 generateState :: StdGen -> [Integer]
 generateState generator = randomList generator 1 []
@@ -79,6 +80,7 @@ main =
               , board = initialBoard
               , evaluation = initialEvaluation
               , pickedColor = 0
+              , showState = False
               } -- initial model
         , update = updateModel -- update function
         , view = viewModel -- view function
@@ -99,7 +101,15 @@ updateModel CheckCurrentRow m = noEff newModel
     (r, w) = checkBoardRow b cr s
     ev = evaluation m
     newEvaluation = updateEvaluation ev cr r w
-    newModel = m {evaluation = newEvaluation, currentRow = cr - 1}
+    newModel =
+      m
+        { evaluation = newEvaluation
+        , currentRow =
+            if cr >= 2
+              then cr - 1
+              else cr
+        , showState = cr == 1 || r == 4 && w == 0
+        }
 updateModel (PickColor i) m = noEff (m {pickedColor = i})
 updateModel (AssignColor i) m = noEff m {board = newBoard}
   where
@@ -122,19 +132,43 @@ viewModel :: Model -> View Action
 viewModel m =
   div_
     [class_ "content"]
-    [ div_ [style_ boardStyle] rows
-    , div_ [style_ boardStyle] colorsForPick
+    [ div_
+        [ style_ boardStyle
+        , if showStateLine
+            then style_ stateVisibleStyle
+            else style_ stateInvisibleStyle
+        ]
+        [ div_ [style_ cellStyle, (getNStyle (s !! 0) colors)] []
+        , div_ [style_ cellStyle, (getNStyle (s !! 1) colors)] []
+        , div_ [style_ cellStyle, (getNStyle (s !! 2) colors)] []
+        , div_ [style_ cellStyle, (getNStyle (s !! 3) colors)] []
+        ]
+    , div_ [style_ boardStyle, style_ borderStyle] rows
+    , div_ [style_ boardStyle, style_ borderStyle] colorsForPick
     , div_
         [style_ boardStyle]
-        [button_ [onClick CheckCurrentRow] [text "Check row"]]
+        [ button_
+            [style_ widthStyle, onClick CheckCurrentRow]
+            [text "Check row"]
+        ]
     ]
   where
     b = board m
     n = length b
+    s = state m
+    showStateLine = showState m
     rowCount = div n 4
+    pc = pickedColor m
     ev = evaluation m
     colorsForPick =
-      [ div_ [getNStyle i colors, style_ cellStyle, onClick (PickColor i)] []
+      [ div_
+        [ getNStyle i colors
+        , if pc == i
+            then style_ selectedCellStyle
+            else style_ cellStyle
+        , onClick (PickColor i)
+        ]
+        []
       | i <- [1 .. 8]
       ]
     rows =

@@ -36,6 +36,31 @@ cellStyle =
     , ("border", "1px solid")
     ]
 
+stateInvisibleStyle :: M.Map MisoString MisoString
+stateInvisibleStyle = M.fromList [("visibility", "hidden")]
+
+borderStyle :: M.Map MisoString MisoString
+borderStyle = M.fromList [("border", "1px solid")]
+
+widthStyle :: M.Map MisoString MisoString
+widthStyle = M.fromList [("width", "200px")]
+
+stateVisibleStyle :: M.Map MisoString MisoString
+stateVisibleStyle =
+  M.fromList [("visibility", "visible"), ("border", "1px solid")]
+
+selectedCellStyle :: M.Map MisoString MisoString
+selectedCellStyle =
+  M.fromList
+    [ ("width", "20px")
+    , ("height", "20px")
+    , ("border-radius", "20px")
+    , ("float", "left")
+    , ("margin", "9px")
+    , ("border-color", "red")
+    , ("border", "2px solid")
+    ]
+
 evStyle :: M.Map MisoString MisoString
 evStyle =
   M.fromList [("width", "20px"), ("float", "left"), ("margin-top", "10px")]
