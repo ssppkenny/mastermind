@@ -46,16 +46,17 @@ colors =
 integerToMisoString :: Integer -> MisoString
 integerToMisoString n = toMisoString (fromIntegral n :: Int)
 
-randomList :: StdGen -> Integer -> [Integer] -> [Integer]
-randomList g i lst =
-  if i == 4
-    then toInteger x : lst
-    else randomList next_g (i + 1) (toInteger x : lst)
+randomList :: StdGen -> [Integer] -> [Integer]
+randomList g lst =
+  if length lst == 4
+    then lst
+    else randomList next_g newlst
   where
     (x, next_g) = randomR (1, length colors - 1) g
+    newlst = if (elem (toInteger x) lst) then lst else (toInteger x : lst)
 
 generateState :: StdGen -> [Integer]
-generateState generator = randomList generator 1 []
+generateState generator = randomList generator []
 
 initialBoard :: Array Integer Integer
 initialBoard = array (1, 40) [(i, 0) | i <- [1 .. 40]]
